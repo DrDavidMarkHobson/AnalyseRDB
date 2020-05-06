@@ -5,25 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RDBForm"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="600">
     <Grid>
 
-        <DockPanel x:Name="DockPanel" Width="800" Height="450">
-            <Menu x:Name="RDBMenu" VerticalAlignment="Top" >
+        <DockPanel x:Name="DockPanel" VerticalAlignment="Top" Width="798" Height="26">
+            <Menu x:Name="RDBMenu" VerticalAlignment="Center" >
                 <MenuItem Header="_File" RenderTransformOrigin="0.326,-10.088" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <MenuItem Header="_Open" Click="Open_Click" />
-                    <!--<MenuItem Header="_Save" Click="Save_Click" />-->
+                    <MenuItem Header="_Save" Click="Save_Click" />
                     <Separator />
                     <MenuItem Header="_Rotate45Degrees" Click="Rotate_Click" />
+                    <MenuItem Header="_RotateBySpecific" Click="RotateSpecific_Click" />
                     <Separator />
                     <MenuItem Header="_Exit" Click="Exit_Click"  />
                 </MenuItem>
             </Menu>
 
-            <Canvas x:Name="RDBCanvas" VerticalAlignment="Top" Margin="0,22,0,0">
-                <Image x:Name="CanvasImage" Height="426" Width="696" Source="/ganymede.jpg" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,22,0,0"/>
-            </Canvas>
+            <Label>Angle</Label>
+            <TextBox VerticalAlignment="Center" Name="RDBAngle"  Text="0" TextWrapping="Wrap" Width="30"/>
+            <Label>X</Label>
+            <Label Name="XPosition" Width="30">0</Label>
+            <Label>Y</Label>
+            <Label Name="YPosition" Width="30">0</Label>
+            <Button Name="RotateAngle" Click="RotateAngle_Click">Rotate</Button>
+            <Label></Label>
+
         </DockPanel>
+        <Canvas x:Name="RDBCanvas" VerticalAlignment="Top" Margin="0,22,0,0" Width="798" Height="776">
+                <Image x:Name="CanvasImage" Height="426" Width="696" Source="/ganymede.jpg" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,22,0,0" MouseLeftButtonUp="CanvasImage_MouseLeftButtonUp"/>
+            </Canvas>
 
     </Grid>
 </Window>

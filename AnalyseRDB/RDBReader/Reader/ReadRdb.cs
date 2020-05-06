@@ -1,42 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.IO;
 using RDB.Interface.RDBObjects;
-using System.Linq;
-using Point = RDB.Interface.RDBObjects.Point;
 
 namespace RDBData.Reader
 {
-    public interface IRenderRdb
+    public interface ISaveRdbNetsToFile
     {
-        Image Convert(RdbNets data);
+        void Write(RdbNets data);
     }
-
-    public class RenderRdb : IRenderRdb
+    public class SaveRdbNetsToFile : ISaveRdbNetsToFile
     {
-        private Bitmap _image;
+        private readonly IWriteRDBDataToFile _writeRdbDataToFile;
+        private readonly IWriteableRdb _writeableRdb;
 
-        public RenderRdb()
+        public SaveRdbNetsToFile() : this(new WriteRDBDataToFile(), new WriteableRdb()) { }
+        public SaveRdbNetsToFile(IWriteRDBDataToFile writeRdbDataToFile,
+            IWriteableRdb writeableRdb)
         {
-            _image = new Bitmap(800, 600);
+            _writeRdbDataToFile = writeRdbDataToFile;
+            _writeableRdb = writeableRdb;
         }
 
-        public Image Convert(RdbNets data)
+        public void Write(RdbNets data)
         {
-            var points = data.Nets.SelectMany(net =>
-                net.pins.Select(pin =>
-                    new Point {X = pin.x, Y = pin.y}));
+            _writeRdbDataToFile.Write(_writeableRdb.Write(data), data.fileName);
+        }
+    }
 
-            foreach (var point in points)
+    public interface IWriteRDBDataToFile
+    {
+        void Write(string[] data, string fileName);
+    }
+    public class WriteRDBDataToFile : IWriteRDBDataToFile
+    {
+        public void Write(string[] data, string fileName)
+        {
+            File.WriteAllLines(fileName,data);
+        }
+    }
+    public interface IWriteableRdb
+    {
+        string[] Write(RdbNets data);
+    }
+
+    public class WriteableRdb : IWriteableRdb{
+        public string[] Write(RdbNets data)
+        {
+            var lines = new List<string>();
+
+            foreach (var dataNet in data.Nets)
             {
-                if (point.X >= 0 && point.Y >= 0 && point.X < _image.Width && point.Y < _image.Height)
+                lines.Add(string.Format(RdbFileLines.NetLine, dataNet.name));
+                lines.Add(string.Format(RdbFileLines.PropLine, dataNet.prop));
+                foreach (var pin in dataNet.pins)
                 {
-                    _image.SetPixel(
-                        (int) point.X, (int) point.Y, Color.White);
+                    lines.Add(string.Format(RdbFileLines.PinLine, pin.name, pin.x, pin.y));
                 }
             }
 
-            return _image;
+            return lines.ToArray();
         }
     }
 

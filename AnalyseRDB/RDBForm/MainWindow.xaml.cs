@@ -20,6 +20,7 @@ using Microsoft.Win32;
 using RDB.Interface.RDBObjects;
 using RDBData.Points;
 using RDBData.Reader;
+using RDBData.Render;
 using Point = System.Windows.Point;
 
 namespace RDBForm
@@ -32,25 +33,12 @@ namespace RDBForm
         private List<UIElement> RDBNetPoints;
 
         private RdbNets _loadedData { get; set; }
+        private int xPosition = 0;
+        private int yPosition = 0;
 
         private Point RelativePoint(Pin pin)
         {
             return new Point {X = pin.x, Y = pin.y};
-        }
-
-        private static Line RDBPin(Point pin)
-        {
-            Line myLine = new Line();
-            myLine.Stroke = Brushes.LightSteelBlue;
-            myLine.X1 = pin.X;
-            myLine.X2 = pin.X;
-            myLine.Y1 = pin.Y;
-            myLine.Y2 = pin.Y;
-            myLine.HorizontalAlignment = HorizontalAlignment.Left;
-            myLine.VerticalAlignment = VerticalAlignment.Center;
-            myLine.StrokeThickness = 2;
-
-            return myLine;
         }
 
         public static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat)
@@ -124,13 +112,18 @@ namespace RDBForm
 
             GetRdbNets getter = new GetRdbNets(new ReadRdb(new OpenAndReadRDBFile()));
             _loadedData = getter.Get(fileName);
-            //MessageBox.Show(fileName);
             LoadData();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("text", "caption");
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveRdbNetsToFile save = new SaveRdbNetsToFile();
+                _loadedData.fileName = saveFileDialog.FileName;
+                save.Write(_loadedData);
+            }
         }
 
         private void Rotate_Click(object sender, RoutedEventArgs e)
@@ -150,9 +143,39 @@ namespace RDBForm
             LoadData();
         }
 
+        private void RotateSpecific_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             App.Current.Shutdown();
+        }
+
+        private void RotateAngle_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateRDB rotator = new UpdateRDB();
+            var angle = Convert.ToSingle(RDBAngle.Text);
+
+            _loadedData = rotator.RotateAround(
+                _loadedData,
+                new RDB.Interface.RDBObjects.Point
+                {
+                    X = xPosition,
+                    Y = yPosition
+                },
+                angle
+            );
+
+            LoadData();
+        }
+
+        private void CanvasImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            xPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).X;
+            yPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).Y;
+            XPosition.Content = xPosition;
+            YPosition.Content = yPosition;
         }
     }
 }
