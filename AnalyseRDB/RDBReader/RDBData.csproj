@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="SystemWrapper" Version="0.4.0" />
+    <PackageReference Include="SystemWrapper.Interfaces" Version="0.25.0.186" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RDB.Interface\RDB.Interface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Render\" />
+    <Folder Include="Writer\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Extensions">
+      <HintPath>..\..\..\..\..\PROGRAM FILES\DOTNET\packs\Microsoft.WindowsDesktop.App.Ref\3.1.0\ref\netcoreapp3.1\System.Windows.Extensions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

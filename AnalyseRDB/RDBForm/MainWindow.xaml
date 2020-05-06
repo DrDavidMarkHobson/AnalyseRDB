@@ -1,0 +1,29 @@
+﻿<Window x:Class="RDBForm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RDBForm"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+
+        <DockPanel x:Name="DockPanel" Width="800" Height="450">
+            <Menu x:Name="RDBMenu" VerticalAlignment="Top" >
+                <MenuItem Header="_File" RenderTransformOrigin="0.326,-10.088" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <MenuItem Header="_Open" Click="Open_Click" />
+                    <!--<MenuItem Header="_Save" Click="Save_Click" />-->
+                    <Separator />
+                    <MenuItem Header="_Rotate45Degrees" Click="Rotate_Click" />
+                    <Separator />
+                    <MenuItem Header="_Exit" Click="Exit_Click"  />
+                </MenuItem>
+            </Menu>
+
+            <Canvas x:Name="RDBCanvas" VerticalAlignment="Top" Margin="0,22,0,0">
+                <Image x:Name="CanvasImage" Height="426" Width="696" Source="/ganymede.jpg" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,22,0,0"/>
+            </Canvas>
+        </DockPanel>
+
+    </Grid>
+</Window>
