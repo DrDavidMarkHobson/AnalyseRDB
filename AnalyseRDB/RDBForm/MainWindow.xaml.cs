@@ -21,6 +21,7 @@ using RDB.Interface.RDBObjects;
 using RDBData.Points;
 using RDBData.Reader;
 using RDBData.Render;
+using RDBData.Writer;
 using Point = System.Windows.Point;
 
 namespace RDBForm
@@ -30,18 +31,13 @@ namespace RDBForm
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<UIElement> RDBNetPoints;
+        private RdbNets _loadedData;
+        private int xPosition;
+        private int yPosition;
 
-        private RdbNets _loadedData { get; set; }
-        private int xPosition = 0;
-        private int yPosition = 0;
-
-        private Point RelativePoint(Pin pin)
-        {
-            return new Point {X = pin.x, Y = pin.y};
-        }
-
-        public static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat)
+        public static ImageSource ToImageSource(
+            System.Drawing.Image image, 
+            ImageFormat imageFormat)
         {
             BitmapImage bitmap = new BitmapImage();
 
@@ -65,15 +61,18 @@ namespace RDBForm
 
         private void LoadData()
         {
-            RDBNetPoints = new List<UIElement>();
             var readImage = new RenderRdb();
+            cenXPosition.Content = _loadedData.CentroidX;
+            cenYPosition.Content = _loadedData.CentroidY;
 
-            if (_loadedData.fileName != null && _loadedData.fileName != "")
+            if (!string.IsNullOrEmpty(_loadedData.fileName))
             {
                 var newImage = readImage.Convert(_loadedData);
 
-                ImageBrush brush = new ImageBrush();
-                brush.ImageSource = ToImageSource(newImage, ImageFormat.Bmp);
+                ImageBrush brush = new ImageBrush
+                {
+                    ImageSource = ToImageSource(newImage, ImageFormat.Bmp)
+                };
                 CanvasImage.Source = brush.ImageSource;
                 RDBCanvas.Children.Clear();
                 RDBCanvas.Children.Add(CanvasImage);
@@ -84,19 +83,6 @@ namespace RDBForm
         {
             InitializeComponent();
             _loadedData = new RdbNets { fileName = "", Nets = new RdbNet[]{}};
-            RDBNetPoints = new List<UIElement>();
-
-            Line myLine = new Line();
-            myLine.Stroke = Brushes.LightSteelBlue;
-            myLine.X1 = 1;
-            myLine.X2 = 50;
-            myLine.Y1 = 1;
-            myLine.Y2 = 50;
-            myLine.HorizontalAlignment = HorizontalAlignment.Left;
-            myLine.VerticalAlignment = VerticalAlignment.Center;
-            myLine.StrokeThickness = 2;
-            RDBNetPoints.Add(myLine);
-
             LoadData();
         }
 
@@ -126,27 +112,6 @@ namespace RDBForm
             }
         }
 
-        private void Rotate_Click(object sender, RoutedEventArgs e)
-        {
-            UpdateRDB rotator = new UpdateRDB();
-
-            _loadedData = rotator.RotateAround(
-                _loadedData,
-                new RDB.Interface.RDBObjects.Point
-                {
-                    X = _loadedData.CentroidX, 
-                    Y = _loadedData.CentroidY
-                },
-                (float)45
-            );
-
-            LoadData();
-        }
-
-        private void RotateSpecific_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             App.Current.Shutdown();
@@ -173,7 +138,7 @@ namespace RDBForm
         private void CanvasImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             xPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).X;
-            yPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).Y;
+            yPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).Y-44;
             XPosition.Content = xPosition;
             YPosition.Content = yPosition;
         }

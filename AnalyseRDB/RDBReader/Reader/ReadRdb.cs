@@ -1,44 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using RDB.Interface.RDBObjects;
 
 namespace RDBData.Reader
 {
-    public interface ISaveRdbNetsToFile
-    {
-        void Write(RdbNets data);
-    }
-    public class SaveRdbNetsToFile : ISaveRdbNetsToFile
-    {
-        private readonly IWriteRDBDataToFile _writeRdbDataToFile;
-        private readonly IWriteableRdb _writeableRdb;
-
-        public SaveRdbNetsToFile() : this(new WriteRDBDataToFile(), new WriteableRdb()) { }
-        public SaveRdbNetsToFile(IWriteRDBDataToFile writeRdbDataToFile,
-            IWriteableRdb writeableRdb)
-        {
-            _writeRdbDataToFile = writeRdbDataToFile;
-            _writeableRdb = writeableRdb;
-        }
-
-        public void Write(RdbNets data)
-        {
-            _writeRdbDataToFile.Write(_writeableRdb.Write(data), data.fileName);
-        }
-    }
-
-    public interface IWriteRDBDataToFile
-    {
-        void Write(string[] data, string fileName);
-    }
-    public class WriteRDBDataToFile : IWriteRDBDataToFile
-    {
-        public void Write(string[] data, string fileName)
-        {
-            File.WriteAllLines(fileName,data);
-        }
-    }
     public interface IWriteableRdb
     {
         string[] Write(RdbNets data);

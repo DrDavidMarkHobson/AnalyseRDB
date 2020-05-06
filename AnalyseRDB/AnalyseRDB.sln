@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnalyseRDB", "AnalyseRDB\AnalyseRDB.csproj", "{BE51AE23-37A8-4AFA-87C0-E903D905F1F5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDBData", "RDBReader\RDBData.csproj", "{06C2358D-94D3-4CDF-BE7D-EBFE03A2AB37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDBData.Tests", "RDBReader.Tests\RDBData.Tests.csproj", "{8F1BC7F6-403D-4255-B691-8083DE8ADFBA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDB.Interface", "RDB.Interface\RDB.Interface.csproj", "{FA94F375-A9F2-4F81-B96F-D596BC9BC50D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDBForm", "RDBForm\RDBForm.csproj", "{C178D59A-F77D-43AC-ADE8-182BF4805E52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDBForm", "RDBForm\RDBForm.csproj", "{C178D59A-F77D-43AC-ADE8-182BF4805E52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BE51AE23-37A8-4AFA-87C0-E903D905F1F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE51AE23-37A8-4AFA-87C0-E903D905F1F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE51AE23-37A8-4AFA-87C0-E903D905F1F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE51AE23-37A8-4AFA-87C0-E903D905F1F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{06C2358D-94D3-4CDF-BE7D-EBFE03A2AB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{06C2358D-94D3-4CDF-BE7D-EBFE03A2AB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06C2358D-94D3-4CDF-BE7D-EBFE03A2AB37}.Release|Any CPU.ActiveCfg = Release|Any CPU

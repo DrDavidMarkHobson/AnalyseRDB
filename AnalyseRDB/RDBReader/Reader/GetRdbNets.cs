@@ -18,7 +18,7 @@ namespace RDBData.Reader
                 fileName = fileName,
                 Nets = nets
             };
-            rdbNets.updateCentroid();
+            rdbNets.UpdateCentroid();
 
             return rdbNets;
         }

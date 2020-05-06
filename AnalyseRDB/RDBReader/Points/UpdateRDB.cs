@@ -42,7 +42,7 @@ namespace RDBData.Points
                 net.pins = newPins;
             }
 
-            nets.updateCentroid();
+            nets.UpdateCentroid();
 
             return nets;
         }

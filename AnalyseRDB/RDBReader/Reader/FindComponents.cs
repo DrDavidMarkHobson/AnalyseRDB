@@ -6,7 +6,7 @@ namespace RDBData.Reader
 {
     public class FindComponents : IFindComponents
     {
-        private string getPinComponentName(string pinName)
+        private string GetPinComponentName(string pinName)
         {
             return pinName.Contains("_") ? 
                 pinName.Split('_')[0] : 
@@ -20,7 +20,7 @@ namespace RDBData.Reader
 
             foreach (var pin in allPins)
             {
-                var componentName = getPinComponentName(pin.name);
+                var componentName = GetPinComponentName(pin.name);
                 var existingComponent =
                     components.FirstOrDefault(component =>
                         component.name == componentName);
@@ -39,7 +39,7 @@ namespace RDBData.Reader
                         {
                             name = componentName,
                             pins = allPins.Where(matchingPin =>
-                                getPinComponentName(matchingPin.name) == componentName)
+                                GetPinComponentName(matchingPin.name) == componentName)
                         });
                     }
                 }
