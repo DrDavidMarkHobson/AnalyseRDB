@@ -50,7 +50,7 @@ namespace RDBData.Tests.Points
                 .Returns(expectedPoint);
 
             //Act
-            var result = subject.RotateAround(nets, pivot, angle);
+            var result = subject.RotateAround(nets, pivot, angle).Result;
             var resultPoints =
                 result.Nets.SelectMany(pins =>
                         pins.pins.Select(pin =>

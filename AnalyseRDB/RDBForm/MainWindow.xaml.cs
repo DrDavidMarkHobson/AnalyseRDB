@@ -1,28 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using SystemInterface.IO;
-using SystemWrapper.IO;
 using Microsoft.Win32;
 using RDB.Interface.RDBObjects;
 using RDBData.Points;
 using RDBData.Reader;
 using RDBData.Render;
 using RDBData.Writer;
-using Point = System.Windows.Point;
 
 namespace RDBForm
 {
@@ -32,8 +22,12 @@ namespace RDBForm
     public partial class MainWindow : Window
     {
         private RdbNets _loadedData;
+        private UpdateRDB _updateRDB;
         private int xPosition;
         private int yPosition;
+        private float _angle;
+
+        private BackgroundWorker bgw;
 
         public static ImageSource ToImageSource(
             System.Drawing.Image image, 
@@ -84,6 +78,8 @@ namespace RDBForm
             InitializeComponent();
             _loadedData = new RdbNets { fileName = "", Nets = new RdbNet[]{}};
             LoadData();
+            bgw = new BackgroundWorker();
+            _updateRDB = new UpdateRDB();
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -119,20 +115,49 @@ namespace RDBForm
 
         private void RotateAngle_Click(object sender, RoutedEventArgs e)
         {
-            UpdateRDB rotator = new UpdateRDB();
-            var angle = Convert.ToSingle(RDBAngle.Text);
+            RotateAngle.IsEnabled = false;
+            bgw = new BackgroundWorker();
+            ProgressBar.Value = 0;
+            _angle = Convert.ToSingle(RDBAngle.Text);
 
-            _loadedData = rotator.RotateAround(
+            bgw.DoWork += new DoWorkEventHandler(bgw_Rotate);
+            bgw.ProgressChanged += new ProgressChangedEventHandler(bgw_ProgressChanged);
+            bgw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgw_RunWorkerCompleted);
+            bgw.WorkerReportsProgress = true;
+            bgw.RunWorkerAsync();
+        }
+
+        async void bgw_Rotate(object sender, DoWorkEventArgs e)
+        {
+            _updateRDB.BackgroundWorker = bgw;
+
+            _loadedData = await _updateRDB.RotateAround(
                 _loadedData,
                 new RDB.Interface.RDBObjects.Point
                 {
                     X = xPosition,
                     Y = yPosition
                 },
-                angle
+                _angle
             );
+        }
 
+        void bgw_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ProgressBar.Value = e.ProgressPercentage;
+            if (e.UserState != null && (int)e.UserState > 1)
+            {
+                ProgressBar.Value = ProgressBar.Value + 50;
+            }
+        }
+
+        void bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ProgressBar.Value = 0;
+            Thread.Sleep(1);
+            bgw = null;
             LoadData();
+            RotateAngle.IsEnabled = true;
         }
 
         private void CanvasImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -141,6 +166,19 @@ namespace RDBForm
             yPosition = (int)Mouse.GetPosition(Application.Current.MainWindow).Y-44;
             XPosition.Content = xPosition;
             YPosition.Content = yPosition;
+        }
+
+        private void DoThread_Click(object sender, RoutedEventArgs e)
+        {
+            /*
+            ProgressBar.Value = 0;
+
+            bgw.DoWork += new DoWorkEventHandler(bgw_DoWork);
+            bgw.ProgressChanged += new ProgressChangedEventHandler(bgw_ProgressChanged);
+            bgw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgw_RunWorkerCompleted);
+            bgw.WorkerReportsProgress = true;
+            bgw.RunWorkerAsync();
+            */
         }
     }
 }

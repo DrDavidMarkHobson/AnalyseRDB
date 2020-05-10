@@ -10,10 +10,11 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="36*"/>
             <ColumnDefinition Width="223*"/>
-            <ColumnDefinition Width="341*"/>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="322*"/>
         </Grid.ColumnDefinitions>
 
-        <DockPanel x:Name="DockPanel" VerticalAlignment="Top" Width="798" Height="26" Grid.ColumnSpan="3" Margin="0,0,-198,0">
+        <DockPanel x:Name="DockPanel" VerticalAlignment="Top" Width="798" Height="26" Grid.ColumnSpan="4" Margin="0,0,-198,0">
             <Menu x:Name="RDBMenu" VerticalAlignment="Center" >
                 <MenuItem Header="_File" RenderTransformOrigin="0.326,-10.088" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <MenuItem Header="_Open" Click="Open_Click" />
@@ -34,10 +35,12 @@
             <Label Name="cenXPosition" Width="30">0</Label>
             <Label>Centroid Y</Label>
             <Label Name="cenYPosition" Width="30">0</Label>
-            <Label></Label>
+            <ProgressBar Name="ProgressBar" Height="10" Width="100"/>
+            <Label>
+            </Label>
 
         </DockPanel>
-        <Canvas x:Name="RDBCanvas" VerticalAlignment="Top" Margin="0,22,-198,0" Width="798" Height="776" Grid.ColumnSpan="3">
+        <Canvas x:Name="RDBCanvas" VerticalAlignment="Top" Margin="0,22,-198,0" Width="798" Height="776" Grid.ColumnSpan="4">
             <Image x:Name="CanvasImage" Height="426" Width="696" Source="/ganymede.jpg" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,22,0,0" MouseLeftButtonUp="CanvasImage_MouseLeftButtonUp"/>
         </Canvas>
 

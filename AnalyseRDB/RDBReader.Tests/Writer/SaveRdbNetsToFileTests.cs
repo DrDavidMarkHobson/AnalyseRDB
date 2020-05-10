@@ -2,7 +2,6 @@
 using Moq;
 using Moq.AutoMock;
 using RDB.Interface.RDBObjects;
-using RDBData.Reader;
 using RDBData.Writer;
 using Xunit;
 
@@ -40,8 +39,6 @@ namespace RDBData.Tests.Writer
                 called.Write(stringData, data.fileName), Times.Once());
             Mocker.Verify<IWriteableRdb>(called =>
                 called.Write(data), Times.Once());
-
-
         }
     }
 }
