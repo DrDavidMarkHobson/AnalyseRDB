@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using AutoFixture;
 using FluentAssertions;
@@ -34,25 +36,60 @@ namespace RDBData.Tests.Points
                     new Point {X = point.X + 1, Y = point.Y + 1});
         }
 
+        private int _progress = 0;
+        private bool _canComplete = false;
+
+        void bgw_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            _progress = e.ProgressPercentage;
+        }
+
+        void bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            _canComplete = true;
+        }
+
+        void bgw_Test(object sender, DoWorkEventArgs e)
+        {
+            _results = _updateRdb.RotateAround(_testNets.Nets, _pivot, _angle, _backgroundworker).Result;
+        }
+
+        private UpdateRDB _updateRdb;
+        private BackgroundWorker _backgroundworker;
+        private TestNets _testNets;
+        private Point _pivot;
+        private float _angle;
+        private RdbNets _results;
+
         [Fact]
         public void WhenUpdate()
         {
             //Arrange
-            var subject = Mocker.CreateInstance<UpdateRDB>();
-            var testNets = AutoFixture.Create<TestNets>();
-            var nets = testNets.Nets;
-            var pivot = AutoFixture.Create<Point>();
-            var angle = AutoFixture.Create<float>();
+            _updateRdb = Mocker.CreateInstance<UpdateRDB>();
+            _testNets = AutoFixture.Create<TestNets>();
+            _pivot = AutoFixture.Create<Point>();
+            _angle = AutoFixture.Create<float>();
+            _backgroundworker = new BackgroundWorker();
+            _results = null;
+            _canComplete = false;
 
-            var expectedPoint = new Point {X = 1, Y = 1};
+            var expectedPoint = new Point { X = 1, Y = 1 };
             Mocker.GetMock<IMovePoint>()
-                .Setup(move => move.RotateAround(It.IsAny<Point>(), pivot, angle))
+                .Setup(move => move.RotateAround(It.IsAny<Point>(), _pivot, _angle))
                 .Returns(expectedPoint);
 
             //Act
-            var result = subject.RotateAround(nets, pivot, angle).Result;
+            _backgroundworker.DoWork += new DoWorkEventHandler(bgw_Test);
+            _backgroundworker.ProgressChanged += new ProgressChangedEventHandler(bgw_ProgressChanged);
+            _backgroundworker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgw_RunWorkerCompleted);
+            _backgroundworker.WorkerReportsProgress = true;
+            _backgroundworker.RunWorkerAsync();
+
+            while (_canComplete == false)
+            {}
+
             var resultPoints =
-                result.Nets.SelectMany(pins =>
+                _results.Nets.SelectMany(pins =>
                         pins.pins.Select(pin =>
                             new Point {X = pin.x, Y = pin.y}))
                     .ToArray();
@@ -66,8 +103,10 @@ namespace RDBData.Tests.Points
                 i++;
             }
 
-            result.CentroidX.Should().Be((float)1);
-            result.CentroidY.Should().Be((float)1);
+            _results.CentroidX.Should().Be((float)1);
+            _results.CentroidY.Should().Be((float)1);
+
+            _progress.Should().Be(100);
         }
     }
 }

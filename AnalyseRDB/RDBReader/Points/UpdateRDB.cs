@@ -12,11 +12,9 @@ namespace RDBData.Points
         private readonly IMovePoint _movePoint;
         public int Index { get; private set; }
         public int NumberOfEntries { get; private set; }
-
         public BackgroundWorker BackgroundWorker { get; set; }
 
         public UpdateRDB() : this(new MovePoint()) { }
-
 
         public UpdateRDB(IMovePoint movePoint)
         {
@@ -25,8 +23,82 @@ namespace RDBData.Points
             Index = 0;
         }
 
-        public async Task<RdbNets> RotateAround(RdbNets nets, Point pivot, float angle)
+        public UpdateRDB(
+            RdbNets taskNets,
+            Point pivot,
+            float angle
+            )
         {
+            _taskNets = taskNets;
+            _pivot = pivot;
+            _angle = angle;
+            _newPins = new List<Pin>();
+            _intervals = 100;
+            _currentIndex = 0;
+            _taskDone = false;
+        }
+
+        private RdbNets _taskNets;
+        private Point _pivot;
+        private float _angle;
+        private int _intervals;
+        private int _currentIndex;
+        private Pin[] _pins => _taskNets.Nets.SelectMany(net => net.pins).ToArray();
+        private List<Pin> _newPins;
+        private int _intervalSpan => _pins.Length / _intervals;
+        private bool _taskDone;
+        public bool TaskDone => _taskDone;
+
+        public async Task<int> RotateAround()
+        {
+            Thread.Sleep(1);
+            if (_currentIndex < 0)
+            {
+                _currentIndex = 0;
+            }
+            int nextInterval = _currentIndex + _intervalSpan;
+            if (nextInterval > _pins.Length)
+            {
+                nextInterval = _pins.Length;
+            }
+            while(_currentIndex < nextInterval)
+            {
+                RotatePin(_currentIndex++);
+            }
+            if (_currentIndex == _pins.Length)
+            {
+                _taskDone = true;
+            }
+            var result = _currentIndex / _intervalSpan;
+            return result;
+        }
+
+        private void RotatePin(int _currentIndex)
+        {
+            var point = new Point
+            {
+                X = _pins[_currentIndex].x,
+                Y = _pins[_currentIndex].y
+            };
+            if (_pins[_currentIndex].name != "_")
+            {
+                point = ManipulatePoints.RotateAround(point, _pivot, _angle);
+            }
+            _newPins.Add(new Pin
+            {
+                name = _pins[_currentIndex].name,
+                x = point.X,
+                y = point.Y
+            });
+        }
+
+        public async Task<RdbNets> RotateAround(
+            RdbNets nets, 
+            Point pivot, 
+            float angle, 
+            BackgroundWorker bgw)
+        {
+            BackgroundWorker = bgw;
             NumberOfEntries = nets.Nets.SelectMany(net => net.pins).Count();
             Index = 0;
             int oldPercent = 0;
@@ -61,7 +133,7 @@ namespace RDBData.Points
                     BackgroundWorker.ReportProgress(newPercent, (int)1);
                     if (newPercent > oldPercent)
                     {
-                        Thread.Sleep(1);
+                        Thread.Sleep(5);
                     }
                 }
                 net.pins = newPins; 

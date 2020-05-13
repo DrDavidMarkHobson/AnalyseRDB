@@ -129,8 +129,6 @@ namespace RDBForm
 
         async void bgw_Rotate(object sender, DoWorkEventArgs e)
         {
-            _updateRDB.BackgroundWorker = bgw;
-
             _loadedData = await _updateRDB.RotateAround(
                 _loadedData,
                 new RDB.Interface.RDBObjects.Point
@@ -138,7 +136,8 @@ namespace RDBForm
                     X = xPosition,
                     Y = yPosition
                 },
-                _angle
+                _angle,
+                bgw
             );
         }
 

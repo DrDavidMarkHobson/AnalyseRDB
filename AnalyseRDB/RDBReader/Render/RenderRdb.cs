@@ -7,9 +7,13 @@ using Point = RDB.Interface.RDBObjects.Point;
 
 namespace RDBData.Render
 {
-    public class RenderRdb : IRenderRdb
+    public class ThreadedWorker
     {
-        private Bitmap _image;
+    }
+
+    public class RenderRdb : ThreadedWorker, IRenderRdb
+    {
+        private Bitmap _image; 
         public BackgroundWorker BackgroundWorker { get; set; }
 
         public RenderRdb()

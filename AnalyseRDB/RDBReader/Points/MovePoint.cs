@@ -21,4 +21,21 @@ namespace RDBData.Points
             };
         }
     }
+    public static class ManipulatePoints
+    {
+        public static Point RotateAround(Point point, Point pivot, float angle)
+        {
+            var angleInRadians = angle * (float)(Math.PI / 180);
+            var cosTheta = (float)Math.Cos(angleInRadians);
+            var sinTheta = (float)Math.Sin(angleInRadians);
+
+            return new Point
+            {
+                X = cosTheta * (point.X - pivot.X) -
+                    sinTheta * (point.Y - pivot.Y) + pivot.X,
+                Y = sinTheta * (point.X - pivot.X) +
+                    cosTheta * (point.Y - pivot.Y) + pivot.Y
+            };
+        }
+    }
 }
